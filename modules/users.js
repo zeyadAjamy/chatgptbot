@@ -13,7 +13,6 @@ const isUserRegistered = async (userId) => {
 const isUserAllowed = async (userId) => {
      try {
           const user = await User.findOne({ userId });
-          console.log(userId);
           return user.state === 'ALLOWED' ? true : false;
      } catch (error) {
           console.log(error);

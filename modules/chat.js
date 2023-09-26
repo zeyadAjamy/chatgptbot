@@ -60,7 +60,6 @@ const getCurrentChatHistory = async (userId) => {
 }
 
 const retrieveChatList = async (userId) => {
-     console.log(userId)
      try {
           const chats = await Chat.find({ userId });
           return chats;

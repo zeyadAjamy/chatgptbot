@@ -12,7 +12,6 @@ const register = async (userId) => {
           await registerUser(user);
           // Create new chat and return chatId
           const chatId = await createNewChat(userId);
-          console.log(chatId)
           // Assign chatId to user
           await assignChatId(userId, chatId);
           // Add message to chat

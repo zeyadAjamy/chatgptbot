@@ -1,6 +1,7 @@
 const { isUserRegistered, isUserAllowed, getCurrentChatId } = require('../modules/users');
 const { addMessageToChat } = require('../modules/chat');
 const { Message } = require('../db/schemas');
+const { getGPTResponse } = require('../modules/chatgpt');
 
 const sendMessage = async (userId, message) => {
      // Check if the user is registered and allowed to chat
@@ -12,12 +13,9 @@ const sendMessage = async (userId, message) => {
      // Get the current chatId
      const chatId = await getCurrentChatId(userId);
 
-     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-     // TODO: send the user message to the chatgpt API
-     // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-     const messageStatus = true;
-     const response = "This is a response";
+     // Get the response from GPT
+     const response = await getGPTResponse(message, userId);
+     const messageStatus = !!response; // If response is null, message failed to send
 
      if (!messageStatus) {
           return "Message failed to send!";
