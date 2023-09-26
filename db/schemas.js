@@ -3,8 +3,7 @@ const uuid = require('uuid');
 
 const userSchema = new mongoose.Schema({
      userId: {
-          type: String, // Use String for UUID
-          default: uuid.v4(), // Generate a UUID as the default value
+          type: Number, // Use String for UUID
           required: true,
           unique: true,
      },
@@ -13,6 +12,10 @@ const userSchema = new mongoose.Schema({
           enum: ['ALLOWED', 'BLOCKED'],
           default: 'ALLOWED',
      },
+     currentChatId: {
+          type: String,
+          default: null,
+     },
      createdAt: {
           type: Date,
           default: Date.now, // Pass a function reference for default value
@@ -20,9 +23,8 @@ const userSchema = new mongoose.Schema({
 });
 
 const messageSchema = new mongoose.Schema({
-     chat: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Chat',
+     chatId : {
+          type: String, // Use String for chatId
           required: true,
      },
      text: {
@@ -42,12 +44,12 @@ const messageSchema = new mongoose.Schema({
 const chatSchema = new mongoose.Schema({
      chatId: {
           type: String, // Use String for chatId
-          default: uuid.v4(), // Generate a UUID as the default value
+          default: uuid.v4, // Pass a function reference for default value
           unique: true,
      },
-     user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'User',
+     userId: {
+          type: Number,
+          required: true,
      },
      messages: [{
           type: mongoose.Schema.Types.ObjectId,

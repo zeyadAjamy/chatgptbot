@@ -13,6 +13,7 @@ const isUserRegistered = async (userId) => {
 const isUserAllowed = async (userId) => {
      try {
           const user = await User.findOne({ userId });
+          console.log(userId);
           return user.state === 'ALLOWED' ? true : false;
      } catch (error) {
           console.log(error);
@@ -30,8 +31,33 @@ const registerUser = async (user) => {
      return false;
 }
 
+const assignChatId = async (userId, chatId) => {
+     try {
+          const user = await User.findOne({ userId });
+          
+          user.currentChatId = chatId;
+          await user.save();
+          return true;
+     } catch (error) {
+          console.log(error);
+     }
+     return false;
+}
+
+const getCurrentChatId = async (userId) => {
+     try {
+          const user = await User.findOne({ userId });
+          return user.currentChatId;
+     } catch (error) {
+          console.log(error);
+     }
+     return null;
+}
+
 module.exports = {
      isUserRegistered,
      isUserAllowed,
-     registerUser
+     registerUser,
+     assignChatId,
+     getCurrentChatId,
 }

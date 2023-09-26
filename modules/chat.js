@@ -1,4 +1,5 @@
-const Chat = require('../db/schemas').Chat;
+const { Chat, Message } = require('../db/schemas');
+const { getCurrentChatId } = require('./users');
 
 const isChatRegistered = async (chatId) => {
      try {
@@ -10,21 +11,23 @@ const isChatRegistered = async (chatId) => {
      return false;
 }
 
-const createNewChat = async (chat) => {
+const createNewChat = async (userId) => {
      try {
-          const newChat = new Chat(chat);
+          const newChat = new Chat({ userId });
           await newChat.save();
-          return true;
+          return newChat.chatId;
      } catch (error) {
           console.log(error);
      }
-     return false;
+     return null;
 }
 
+// Add message to chat
 const addMessageToChat = async (chatId, message) => {
      try {
           const chat = await Chat.findOne({ chatId });
           chat.messages.push(message);
+          await Message(message).save();
           await chat.save();
           return true;
      } catch (error) {
@@ -33,9 +36,10 @@ const addMessageToChat = async (chatId, message) => {
      return false;
 }
 
+// Retrieve specific chat' messages
 const retriveOldMessages = async (chatId) => {
      try {
-          const chat = await Chat.findOne({ chatId });
+          const chat = await Chat.findOne({ chatId }).populate('messages');
           return chat.messages;
      } catch (error) {
           console.log(error);
@@ -43,7 +47,20 @@ const retriveOldMessages = async (chatId) => {
      return [];
 }
 
+// used by '/history' command
+const getCurrentChatHistory = async (userId) => {
+     try {
+          const currentChatId = await getCurrentChatId(userId);
+          const messages = await retriveOldMessages(currentChatId);
+          return messages;
+     } catch (error) {
+          console.log(error);
+     }
+     return [];
+}
+
 const retrieveChatList = async (userId) => {
+     console.log(userId)
      try {
           const chats = await Chat.find({ userId });
           return chats;
@@ -58,5 +75,6 @@ module.exports = {
      createNewChat,
      addMessageToChat,
      retriveOldMessages,
+     getCurrentChatHistory,
      retrieveChatList
 }
